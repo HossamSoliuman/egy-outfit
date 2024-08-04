@@ -18,6 +18,7 @@ class ProductFactory extends Factory
             'description' => $this->faker->paragraph,
             'price' => $this->faker->randomFloat(2, 10, 500),
             'category_id' => rand(1, 5),
+            'rating' => rand(1, 5),
             'gender' => fake()->randomElement($gender),
             'sku' => strtoupper(Str::random(10)),
             'stock' => $this->faker->numberBetween(0, 100),

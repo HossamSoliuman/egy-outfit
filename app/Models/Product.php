@@ -22,6 +22,7 @@ class Product extends Model
         'category_id',
         'sku',
         'stock',
+        'rating',
         'size',
         'color',
         'material',

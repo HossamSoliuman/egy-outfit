@@ -27,4 +27,4 @@ Route::middleware('auth')->group(function () {
 
 Route::view('/', 'users/categories');
 
-Route::post('home', [HomeController::class, 'index']);
+Route::get('home', [HomeController::class, 'index']);

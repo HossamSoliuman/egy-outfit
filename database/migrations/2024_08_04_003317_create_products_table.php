@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('gender');
             $table->string('sku')->unique();
             $table->integer('stock');
+            $table->float('rating')->default(0);
             $table->string('size');
             $table->string('color');
             $table->string('material');

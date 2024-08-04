@@ -24,7 +24,7 @@
 
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-
+    <script src="https://kit.fontawesome.com/7622502461.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
