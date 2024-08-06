@@ -25,6 +25,6 @@ Route::post('temp/store', [TempFileController::class, 'store'])->name('upload');
 Route::middleware('auth')->group(function () {
 });
 
-Route::view('/', 'users/categories');
+Route::get('/', [HomeController::class, 'index']);
 
 Route::get('home', [HomeController::class, 'index']);
