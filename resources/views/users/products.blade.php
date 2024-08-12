@@ -2,198 +2,174 @@
 
 @section('app-content')
 
-    <body class="bg-dark-blue text-light-gray font-worksans">
-        <div class="min-h-screen flex">
-            <!-- Products Section -->
-            <div class="w-5/6 p-4">
-                <h1 class="text-4xl font-bold mb-8 text-light-gray">Products</h1>
-                <div id="products" class="grid grid-cols-4 gap-4">
-                    @foreach ($products as $product)
-                        <div class="product-card bg-black rounded-lg p-2">
-                            <img src="{{ $product->cover }}" alt="{{ $product->name }}"
-                                class="w-full h-32 object-cover rounded-t-lg mb-2">
-                            <div class="p-2">
-                                <h2 class="text-lg font-semibold mb-2 text-white">{{ $product->name }}</h2>
-                                <p class="text-yellow font-bold mb-2">جنيه {{ number_format($product->price, 2) }}</p>
-                                <div class="text-sm text-light-gray mb-2">
-                                    <p>Stock: {{ $product->stock }}</p>
-                                </div>
-                                <div class="flex items-center">
-                                    @for ($i = 0; $i < 5; $i++)
-                                        @if ($i < $product->rating)
-                                            <i class="fas fa-star text-yellow"></i>
-                                        @else
-                                            <i class="fas fa-star text-gray"></i>
-                                        @endif
-                                    @endfor
-                                    <span class="ml-2 text-gray">(24)</span>
-                                </div>
+<body class="bg-dark-blue text-light-gray font-worksans" dir="rtl">
+    <div class="min-h-screen flex">
+        <!-- Filter Section -->
+        <div id="filter" class="w-2/12 bg-black p-4 fixed left-0 top-0 bottom-0 z-20 overflow-y-auto border-r-2">
+            <h2 class="text-2xl font-semibold mb-4 text-light-gray">الفلاتر</h2>
+            @include('users.filter_section')
+        </div>
+    
+        <!-- Products Section -->
+        <div class="w-8/12 p-4 mx-auto text-right">
+            <h1 class="text-4xl font-bold mb-8 text-light-gray">المنتجات</h1>
+            <div id="products" class="grid grid-cols-4 gap-4">
+                @foreach ($products as $product)
+                    <div class="product-card bg-black rounded-lg p-2 flex flex-col justify-between h-80" data-id="{{ $product->id }}">
+                        <img src="{{ $product->cover }}" alt="{{ $product->name }}"
+                            class="w-full h-40 object-cover rounded-t-lg mb-2">
+                        <div class="p-2 flex flex-col flex-grow">
+                            <h2 class="text-lg font-semibold mb-2 text-white">{{ $product->name }}</h2>
+                            <div class="flex items-center mb-2">
+                                @for ($i = 0; $i < 5; $i++)
+                                    @if ($i < $product->rating)
+                                        <i class="fas fa-star text-yellow"></i>
+                                    @else
+                                        <i class="fas fa-star text-gray"></i>
+                                    @endif
+                                @endfor
+                                <span class="mr-2 text-gray">(24)</span>
+                            </div>
+                            <p class="text-white font-bold mb-4">{{ number_format($product->price, 2) }} جنيه</p>
+                            
+                            <div class="mt-auto flex justify-center">
+                                <button
+                                    onclick="addToCart('{{ $product->id }}', '{{ $product->name }}', '{{ $product->price }}', '{{ $product->cover }}')"
+                                    class="bg-yellow text-black px-4 rounded-full text-sm">إضافة إلى السلة</button>
                             </div>
                         </div>
-                    @endforeach
-                </div>
-            </div>
-
-            <!-- Filters Section -->
-            <div class=" w-1/6 bg-black p-4">
-                <h2 class="text-2xl font-semibold mb-4 text-light-gray">Filters</h2>
-                <form id="filterForm" method="get" action="{{ url('home') }}">
-                    <input type="hidden" name="display_style" value="Products">
-
-                    <!-- Gender Filter -->
-                    <div class="mb-4">
-                        <h3 class="text-light-gray mb-2">Gender</h3>
-                        <label class="block">
-                            <input type="checkbox" name="gender[]" value="male" class="mr-2"
-                                {{ in_array('male', request('gender', [])) ? 'checked' : '' }}> Men
-                        </label>
-                        <label class="block">
-                            <input type="checkbox" name="gender[]" value="female" class="mr-2"
-                                {{ in_array('female', request('gender', [])) ? 'checked' : '' }}> Women
-                        </label>
-                        <label class="block">
-                            <input type="checkbox" name="gender[]" value="all" class="mr-2"
-                                {{ in_array('all', request('gender', [])) ? 'checked' : '' }}> All
-                        </label>
                     </div>
-
-                    <!-- Category Filter -->
-                    <div class="mb-4">
-                        <h3 class="text-light-gray mb-2">Categories</h3>
-                        <label class="block">
-                            <input type="checkbox" name="category[]" value="Shirts" class="mr-2"
-                                {{ in_array('Shirts', request('category', [])) ? 'checked' : '' }}> Shirts
-                        </label>
-                        <label class="block">
-                            <input type="checkbox" name="category[]" value="Hoodies" class="mr-2"
-                                {{ in_array('Hoodies', request('category', [])) ? 'checked' : '' }}> Hoodies
-                        </label>
-                        <label class="block">
-                            <input type="checkbox" name="category[]" value="Pants" class="mr-2"
-                                {{ in_array('Pants', request('category', [])) ? 'checked' : '' }}> Pants
-                        </label>
-                        <label class="block">
-                            <input type="checkbox" name="category[]" value="Shoes" class="mr-2"
-                                {{ in_array('Shoes', request('category', [])) ? 'checked' : '' }}> Shoes
-                        </label>
-                        <label class="block">
-                            <input type="checkbox" name="category[]" value="Glasses" class="mr-2"
-                                {{ in_array('Glasses', request('category', [])) ? 'checked' : '' }}> Glasses
-                        </label>
-                    </div>
-
-                    <!-- Price Range Filter -->
-                    <div class="mb-4">
-                        <h3 class="text-light-gray mb-2">Price Range</h3>
-                        <div class="flex">
-                            <input type="number" id="minPrice" name="min_price" placeholder="Min"
-                                class="w-1/2 bg-dark-blue text-light-gray border-2 border-medium-blue rounded-lg p-2 mr-2"
-                                value="{{ request('min_price') }}">
-                            <input type="number" id="maxPrice" name="max_price" placeholder="Max"
-                                class="w-1/2 bg-dark-blue text-light-gray border-2 border-medium-blue rounded-lg p-2"
-                                value="{{ request('max_price') }}">
-                        </div>
-                    </div>
-
-                    <!-- Minimum Rating Filter -->
-                    <div class="mb-4">
-                        <h3 class="text-light-gray mb-2">Minimum Rating</h3>
-                        <input type="number" id="rating" name="min_rating" min="1" max="5" step="1"
-                            class="w-full bg-dark-blue text-light-gray border-2 border-medium-blue rounded-lg p-2"
-                            value="{{ request('min_rating') }}">
-                    </div>
-
-                    <!-- Size Filter -->
-                    <div class="mb-4">
-                        <h3 class="text-light-gray mb-2">Size</h3>
-                        <label class="block">
-                            <input type="checkbox" name="size[]" value="S" class="mr-2"
-                                {{ in_array('S', request('size', [])) ? 'checked' : '' }}> Small
-                        </label>
-                        <label class="block">
-                            <input type="checkbox" name="size[]" value="M" class="mr-2"
-                                {{ in_array('M', request('size', [])) ? 'checked' : '' }}> Medium
-                        </label>
-                        <label class="block">
-                            <input type="checkbox" name="size[]" value="L" class="mr-2"
-                                {{ in_array('L', request('size', [])) ? 'checked' : '' }}> Large
-                        </label>
-                        <label class="block">
-                            <input type="checkbox" name="size[]" value="XL" class="mr-2"
-                                {{ in_array('XL', request('size', [])) ? 'checked' : '' }}> Extra Large
-                        </label>
-                    </div>
-
-                    <!-- Color Filter -->
-                    <div class="mb-4">
-                        <h3 class="text-light-gray mb-2">Color</h3>
-                        <label class="block">
-                            <input type="checkbox" name="color[]" value="Red" class="mr-2"
-                                {{ in_array('Red', request('color', [])) ? 'checked' : '' }}> Red
-                        </label>
-                        <label class="block">
-                            <input type="checkbox" name="color[]" value="Blue" class="mr-2"
-                                {{ in_array('Blue', request('color', [])) ? 'checked' : '' }}> Blue
-                        </label>
-                        <label class="block">
-                            <input type="checkbox" name="color[]" value="Green" class="mr-2"
-                                {{ in_array('Green', request('color', [])) ? 'checked' : '' }}> Green
-                        </label>
-                        <label class="block">
-                            <input type="checkbox" name="color[]" value="Black" class="mr-2"
-                                {{ in_array('Black', request('color', [])) ? 'checked' : '' }}> Black
-                        </label>
-                        <label class="block">
-                            <input type="checkbox" name="color[]" value="White" class="mr-2"
-                                {{ in_array('White', request('color', [])) ? 'checked' : '' }}> White
-                        </label>
-                    </div>
-
-                    <!-- Material Filter -->
-                    <div class="mb-4">
-                        <h3 class="text-light-gray mb-2">Material</h3>
-                        <label class="block">
-                            <input type="checkbox" name="material[]" value="Cotton" class="mr-2"
-                                {{ in_array('Cotton', request('material', [])) ? 'checked' : '' }}> Cotton
-                        </label>
-                        <label class="block">
-                            <input type="checkbox" name="material[]" value="Wool" class="mr-2"
-                                {{ in_array('Wool', request('material', [])) ? 'checked' : '' }}> Wool
-                        </label>
-                        <label class="block">
-                            <input type="checkbox" name="material[]" value="Polyester" class="mr-2"
-                                {{ in_array('Polyester', request('material', [])) ? 'checked' : '' }}> Polyester
-                        </label>
-                        <label class="block">
-                            <input type="checkbox" name="material[]" value="Silk" class="mr-2"
-                                {{ in_array('Silk', request('material', [])) ? 'checked' : '' }}> Silk
-                        </label>
-                    </div>
-
-                    <!-- Brand Filter -->
-                    <div class="mb-4">
-                        <h3 class="text-light-gray mb-2">Brand</h3>
-                        <label class="block">
-                            <input type="checkbox" name="brand[]" value="1" class="mr-2"
-                                {{ in_array('1', request('brand', [])) ? 'checked' : '' }}> Brand 1
-                        </label>
-                        <label class="block">
-                            <input type="checkbox" name="brand[]" value="2" class="mr-2"
-                                {{ in_array('2', request('brand', [])) ? 'checked' : '' }}> Brand 2
-                        </label>
-                        <label class="block">
-                            <input type="checkbox" name="brand[]" value="3" class="mr-2"
-                                {{ in_array('3', request('brand', [])) ? 'checked' : '' }}> Brand 3
-                        </label>
-                        <label class="block">
-                            <input type="checkbox" name="brand[]" value="4" class="mr-2"
-                                {{ in_array('4', request('brand', [])) ? 'checked' : '' }}> Brand 4
-                        </label>
-                    </div>
-
-                    <button type="submit" class="bg-yellow text-black py-2 px-8 rounded">Apply Filters</button>
-                </form>
+                @endforeach
             </div>
         </div>
-    </body>
+    
+        <!-- Cart Section -->
+        <div id="cart" class="w-2/12 bg-gray-800 p-4 fixed right-0 top-0 bottom-0 z-10 overflow-y-auto border-l-2">
+            <h2 class="text-2xl font-semibold mb-4 text-light-gray">سلة المشتريات</h2>
+            <button id="process-cart" class="bg-white text-black border rounded-full w-full">إتمام عملية الشراء</button>
+    
+            <ul id="cart-items" class="mb-4">
+                <!-- Cart items will be dynamically added here -->
+            </ul>
+        </div>
+    </div>
+    
+    
+
+    <!-- Cart Item Template -->
+    <template id="cart-item-template" class="w-full">
+        <li class="items-center border-y-2 border-t-0 p-2">
+            <img class="cart-item-image w-full object-cover rounded" alt="">
+            <div class="flex flex-col justify-between items-center">
+                <span class="cart-item-price text-white font-semibold"></span>
+                <div class="flex items-center mt-5">
+                    <button class="cart-item-remove text-white-600 border border-white rounded-full px-2 ml-3">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                    <select class="cart-item-quantity border text-black rounded px-3">
+                    </select>
+                </div>
+            </div>
+        </li>
+    </template>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchCartItems();
+
+            document.getElementById('process-cart').addEventListener('click', function() {
+                // Handle cart processing
+            });
+        });
+
+        function fetchCartItems() {
+            fetch('{{ route('cart.get') }}')
+                .then(response => response.json())
+                .then(data => updateCart(data.cartItems));
+        }
+
+        function addToCart(productId, productName, productPrice, productCover) {
+            fetch('{{ route('cart.add') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        id: productId,
+                        name: productName,
+                        price: productPrice,
+                        cover: productCover
+                    })
+                })
+                .then(response => response.json())
+                .then(data => updateCart(data.cartItems));
+        }
+
+        function updateCartItemQuantity(productId, newQuantity) {
+            fetch('{{ route('cart.add') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        id: productId,
+                        quantity: newQuantity
+                    })
+                })
+                .then(response => response.json())
+                .then(data => updateCart(data.cartItems));
+        }
+
+        function updateCart(cartItems) {
+            const cartItemsContainer = document.getElementById('cart-items');
+            cartItemsContainer.innerHTML = '';
+            cartItems = Object.values(cartItems);
+
+            cartItems.forEach(item => {
+                const cartItemTemplate = document.getElementById('cart-item-template').content.cloneNode(true);
+                cartItemTemplate.querySelector('.cart-item-image').src = item.cover;
+                cartItemTemplate.querySelector('.cart-item-image').alt = item.name;
+                cartItemTemplate.querySelector('.cart-item-price').textContent =
+                    `${item.price} جنيه`;
+                cartItemTemplate.querySelector('.cart-item-quantity').value = item.quantity;
+
+                const quantityDropdown = cartItemTemplate.querySelector('.cart-item-quantity');
+                for (let i = 1; i <= 5; i++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = i;
+                    quantityDropdown.appendChild(option);
+                }
+
+                quantityDropdown.value = item.quantity;
+                quantityDropdown.addEventListener('change', function() {
+                    const newQuantity = parseInt(this.value);
+                    updateCartItemQuantity(item.id, newQuantity);
+                });
+
+                cartItemTemplate.querySelector('.cart-item-remove').addEventListener('click', () => removeFromCart(
+                    item.id));
+
+                cartItemsContainer.appendChild(cartItemTemplate);
+            });
+        }
+
+        function removeFromCart(productId) {
+            fetch('{{ route('cart.remove') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        id: productId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => updateCart(data.cartItems));
+        }
+    </script>
+</body>
 @endsection

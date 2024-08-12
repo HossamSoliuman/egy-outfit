@@ -5,6 +5,7 @@ use App\Http\Controllers\TempFileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CartController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,9 +23,13 @@ Auth::routes([
 ]);
 
 Route::post('temp/store', [TempFileController::class, 'store'])->name('upload');
-Route::middleware('auth')->group(function () {
-});
+Route::middleware('auth')->group(function () {});
 
 Route::get('/', [HomeController::class, 'index']);
 
 Route::get('home', [HomeController::class, 'index']);
+
+
+Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+Route::post('/cart/remove', [CartController::class, 'removeFromCart'])->name('cart.remove');
+Route::get('/cart', [CartController::class, 'getCartItems'])->name('cart.get');

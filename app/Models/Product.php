@@ -15,6 +15,7 @@ class Product extends Model
     const GENDER_ALL = 'all';
 
     protected $fillable = [
+        'id',
         'name',
         'description',
         'price',
